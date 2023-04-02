@@ -1,7 +1,9 @@
 package com.company.enroller.persistence;
 
 import java.util.Collection;
+import java.util.List;
 
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,37 @@ public class ParticipantService {
 		String hql = "FROM Participant";
 		Query query = connector.getSession().createQuery(hql);
 		return query.list();
+	}
+
+	public Participant findByLogin(String login){
+		String hql = "FROM Participant where login =: login";
+		Query query = connector.getSession().createQuery(hql);
+		query.setParameter("login", login);
+		List list = query.list();
+
+        return (Participant) query.uniqueResult();
+		//return (Participant) connector.getSession().get(Participant.class, login);
+	}
+
+	public Participant add(Participant participant){
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().save(participant);
+		transaction.commit();
+		return participant;
+	}
+
+	public Participant delete(Participant participant){
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().delete(participant);
+		transaction.commit();
+		return participant;
+	}
+
+	public Participant put(Participant participant){
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().update(participant);
+		transaction.commit();
+		return participant;
 	}
 
 }
